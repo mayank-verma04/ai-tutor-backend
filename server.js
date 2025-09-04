@@ -1,0 +1,24 @@
+require("dotenv").config();
+const express = require("express");
+const connectDB = require("./db");
+
+const authRoutes = require("./routes/auth");
+const lessonRoutes = require("./routes/lessons");
+const submitRoutes = require("./routes/submit");
+const streakRoutes = require("./routes/streak");
+
+const app = express();
+app.use(express.json());
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/lessons", lessonRoutes);
+app.use("/api/submit", submitRoutes);
+app.use("/api/streak", streakRoutes);
+
+app.get("/", (req, res) => res.send("English Tutor API running"));
+
+const PORT = process.env.PORT || 4000;
+connectDB().then(() => {
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+});
