@@ -20,7 +20,7 @@ app.use("/api/streak", streakRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/progress", progressRoutes);
 
-app.get("/api", (req, res) => res.send("English Tutor API running..."));
+app.get("/api/", (req, res) => res.send("English Tutor API running..."));
 
 const PORT = process.env.PORT || 4000;
 connectDB().then(() => {
