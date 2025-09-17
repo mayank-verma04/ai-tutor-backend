@@ -9,8 +9,9 @@ const resultSchema = new mongoose.Schema({
     comments: String,
     correctedText: String
   },
-  pointsAwarded: Number,
-  createdAt: { type: Date, default: Date.now }
-});
+  pointsAwarded: Number
+}, {
+    timestamps: true
+  });
 
 module.exports = mongoose.model("Result", resultSchema);
