@@ -5,7 +5,7 @@ exports.updateProgress = async (req, res) => {
   try {
     const userId = req.user.id;
     const { module, level, lastSeenSequence } = req.body;
-    const step = req.params.step; // e.g., "vocab"
+    const step = req.params.step; // e.g., "vocab", "sentence"
 
     let progress = await Progress.findOne({ userId, module, level, step });
 
