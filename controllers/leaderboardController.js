@@ -1,3 +1,4 @@
+// controllers/leaderboardController.js
 const User = require("../models/User");
 
 // Top by points

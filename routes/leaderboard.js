@@ -1,3 +1,4 @@
+// routes/leaderboard.js
 const express = require("express");
 const { getLeaderboard, getStreakboard } = require("../controllers/leaderboardController");
 const auth = require("../middleware/auth");

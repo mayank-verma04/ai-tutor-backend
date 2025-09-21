@@ -1,3 +1,4 @@
+// controllers/progressController.js
 const Lesson = require("../models/Lesson");
 const Progress = require("../models/Progress");
 

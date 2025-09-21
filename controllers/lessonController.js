@@ -1,6 +1,8 @@
+// controllers/lessonController.js
 const Lesson = require("../models/Lesson");
 const Progress = require("../models/Progress");
 
+// GET all lessons with optional filters
 exports.getLessons = async (req, res) => {
   try {
     const { module, level, unitNo, step } = req.query;
@@ -106,6 +108,156 @@ exports.getPassageBySequence = async (req, res) => {
       { $match: { "content.passages.sequence": parseInt(sequence, 10) } },
     ]);
     res.json({ passage });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+
+// GET Sentences Formation
+exports.getNextSentenceFormation = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { module, level, limit = 1 } = req.query;
+    // Find existing progress
+    let progress = await Progress.findOne({ userId, module, level, step: "sentenceFormation" });
+    let lastSeen = 0;
+    if (progress) lastSeen = progress.lastSeenSequence;
+    // Fetch next sentences
+    const sentenceList = await Lesson.aggregate([
+      { $match: { module, level, step: "sentenceFormation" } },
+      { $unwind: "$content.sentences" },
+      { $match: { "content.sentences.sequence": { $gt: lastSeen } } },
+      { $sort: { "content.sentences.sequence": 1 } },
+      { $limit: parseInt(limit, 10) },
+      { $project: { prompt: "$content.sentences.prompt", sequence: "$content.sentences.sequence", hint: "$content.sentences.answer", grammar: { $ifNull: ["$content.sentences.grammar", []] }
+      } }      
+    ]);
+    res.json({ sentences: sentenceList });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET All Letters
+exports.getLetters = async (req, res) => {
+  try {
+    const { module, level } = req.query;
+    const letters = await Lesson.aggregate([
+      { $match: { module, level, step: "letters" } },
+      { $unwind: "$content.letters" },
+      { $project: { _id: 0, sequence: "$content.letters.sequence", title: "$content.letters.prompt", type: "$content.letters.type", focus: { $ifNull: ["$content.letters.focus", []] } } },
+      { $sort: { sequence: 1 } }
+    ]);
+    res.json({ letters });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET Letter by sequence number
+exports.getLetterBySequence = async (req, res) => {
+  try {
+    const { module, level, sequence } = req.query;
+    const letter = await Lesson.aggregate([
+      { $match: { module, level, step: "letters" } },
+      { $unwind: "$content.letters" },
+      { $match: { "content.letters.sequence": parseInt(sequence, 10) } },
+    ]);
+    res.json({ letter });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET All Essays
+exports.getEssays = async (req, res) => {
+  try {
+    const { module, level } = req.query;
+    const essays = await Lesson.aggregate([
+      { $match: { module, level, step: "essays" } },
+      { $unwind: "$content.essays" },
+      { $project: { _id: 0, sequence: "$content.essays.sequence", title: "$content.essays.prompt", focus: { $ifNull: ["$content.essays.focus", []] } } },
+      { $sort: { sequence: 1 } }
+    ]);
+    res.json({ essays });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET Essay by sequence number
+exports.getEssayBySequence = async (req, res) => {
+  try {
+    const { module, level, sequence } = req.query;
+    const essay = await Lesson.aggregate([
+      { $match: { module, level, step: "essays" } },
+      { $unwind: "$content.essays" },
+      { $match: { "content.essays.sequence": parseInt(sequence, 10) } },
+    ]);
+    res.json({ essay });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET All Reports
+exports.getReports = async (req, res) => {
+  try {
+    const { module, level } = req.query;
+    const reports = await Lesson.aggregate([
+      { $match: { module, level, step: "reports" } },
+      { $unwind: "$content.reports" },
+      { $project: { _id: 0, sequence: "$content.reports.sequence", title: "$content.reports.prompt", focus: { $ifNull: ["$content.reports.focus", []] } } },
+      { $sort: { sequence: 1 } }
+    ]);
+    res.json({ reports });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET Report by sequence number
+exports.getReportBySequence = async (req, res) => {
+  try {
+    const { module, level, sequence } = req.query;
+    const report = await Lesson.aggregate([
+      { $match: { module, level, step: "reports" } },
+      { $unwind: "$content.reports" },
+      { $match: { "content.reports.sequence": parseInt(sequence, 10) } },
+    ]);
+    res.json({ report });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET All persuasiveWriting
+exports.getPersuasiveWritings = async (req, res) => {
+  try {
+    const { module, level } = req.query;
+    const persuasiveWritings = await Lesson.aggregate([
+      { $match: { module, level, step: "persuasiveWriting" } },
+      { $unwind: "$content.persuasiveWriting" },
+      { $project: { _id: 0, sequence: "$content.persuasiveWriting.sequence", title: "$content.persuasiveWriting.prompt", focus: { $ifNull: ["$content.persuasiveWriting.focus", []] } } },
+      { $sort: { sequence: 1 } }
+    ]);
+    res.json({ persuasiveWritings });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// GET persuasiveWriting by sequence number
+exports.getPersuasiveWritingBySequence = async (req, res) => {
+  try {
+    const { module, level, sequence } = req.query;
+    const persuasiveWriting = await Lesson.aggregate([
+      { $match: { module, level, step: "persuasiveWriting" } },
+      { $unwind: "$content.persuasiveWriting" },
+      { $match: { "content.persuasiveWriting.sequence": parseInt(sequence, 10) } },
+    ]);
+    res.json({ persuasiveWriting });
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
