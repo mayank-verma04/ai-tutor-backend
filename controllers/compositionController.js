@@ -1,19 +1,33 @@
 // controllers/compositionController.js
-const { evaluateWithAI } = require("../services/aiScoringService");
-const { saveEvaluation } = require("../services/pointsService");
+const { evaluateWithAI } = require('../services/aiScoringService');
+const { saveEvaluation } = require('../services/pointsService');
 
 exports.submitComposition = async (req, res) => {
   try {
     const userId = req.user.id;
-    const step = req.params.step;   // e.g., "essays", "letters"
-    const { module = "composition", level, sequence, question, answer } = req.body;
+    const step = req.params.step; // e.g., "essays", "letters"
+    const {
+      module = 'composition',
+      level,
+      sequence,
+      question,
+      answer,
+    } = req.body;
 
     if (!answer || !level || !sequence || !question) {
-      return res.status(400).json({ error: "Missing fields: answer, level, sequence, question required" });
+      return res.status(400).json({
+        error: 'Missing fields: answer, level, sequence, question required',
+      });
     }
 
     // 1. AI Evaluation
-    const evaluation = await evaluateWithAI(module, step, level, question, answer);
+    const evaluation = await evaluateWithAI(
+      module,
+      step,
+      level,
+      question,
+      answer
+    );
 
     // 2. Save result + update user points
     const result = await saveEvaluation(
@@ -28,12 +42,12 @@ exports.submitComposition = async (req, res) => {
 
     // 3. Response
     res.json({
-      msg: "Composition evaluated successfully",
+      msg: 'Composition evaluated successfully',
       evaluation,
-      points: result
+      points: result,
     });
   } catch (err) {
-    console.error("Error in submitComposition:", err);
+    console.error('Error in submitComposition:', err);
     res.status(500).json({ error: err.message });
   }
 };

@@ -1,9 +1,11 @@
-// const express = require("express");
-// const { getStreak } = require("../controllers/streakController");
-// const auth = require("../middleware/auth");
+// routes/streak.js
+const express = require('express');
+const { getStreak } = require('../controllers/streakController');
+const auth = require('../middleware/auth');
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.get("/:id", auth, getStreak);
+// GET /api/streak - Get current user's streak
+router.get('/', auth, getStreak);
 
-// module.exports = router;
+module.exports = router;
