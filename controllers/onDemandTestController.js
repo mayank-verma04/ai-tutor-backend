@@ -1,5 +1,6 @@
 // controllers/onDemandTestController.js
 const aiTestService = require('../services/aiTestService');
+const { updateStreak } = require('../services/streakService');
 
 const testTopicsList = [
   // --- Comprehension Group ---
@@ -71,6 +72,9 @@ exports.evaluateAnswer = async (req, res) => {
       answer,
       level
     );
+
+    await updateStreak(req.user.id);
+
     res.json(evaluation);
   } catch (err) {
     console.error('Error in evaluateAnswer controller:', err);
@@ -106,6 +110,8 @@ exports.evaluateObjective = async (req, res) => {
         score++;
       }
     }
+
+    await updateStreak(req.user.id);
 
     res.json({
       score: score,
