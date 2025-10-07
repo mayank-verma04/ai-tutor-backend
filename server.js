@@ -9,6 +9,7 @@ const compositionRoutes = require('./routes/composition');
 const progressRoutes = require('./routes/progress');
 const streakRoutes = require('./routes/streak');
 const leaderboardRoutes = require('./routes/leaderboard');
+const onDemandTestRoutes = require('./routes/onDemandTest');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/composition', compositionRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/streak', streakRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/tests', onDemandTestRoutes);
 
 app.get('/api/', (req, res) => res.send('English Tutor API running...'));
 
