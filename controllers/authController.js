@@ -6,6 +6,9 @@ const User = require("../models/User");
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    email = email.toLowerCase();
+
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ msg: "Email exists" });
 
@@ -22,10 +25,13 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    email = email.toLowerCase();
+
     const user = await User.findOne({ email });
   
     if (!user) return res.status(400).json({ msg: "Invalid" });
- 
+
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) return res.status(400).json({ msg: "Invalid" });
 
